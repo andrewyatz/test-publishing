@@ -29,7 +29,7 @@ jobs:
         run: |
           echo -n '<h1>' > index.html 
           date +%s >> index.html
-          echo '</h1> >> index.html
+          echo '</h1>' >> index.html
 
       - name: Commit report
         run: |
