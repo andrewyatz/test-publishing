@@ -1,14 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Nightly Compliance Check
 
 # Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  # Trigger every day
+  schedule:
+    - cron: "13 2 * * *"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,12 +22,25 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name: Create report file
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+          
+      - name: Install dependencies
         run: |
-          echo -n '<h1>' > index.html 
-          date +%s >> index.html
-          echo '</h1>' >> index.html
+          python -m pip install --upgrade pip
+          pip install refget-compliance
+
+      - name: Run Refget reference
+        run: "refget-compliance report --server https://refget.herokuapp.com/ --no-web --json_path _data/refget-server-perl.json"
+
+#       - name: Run Refget reference
+#         run: |
+#           echo -n '<h1>' > index.html 
+#           date +%s >> index.html
+#           echo '</h1>' >> index.html
 
       - name: Commit report
         run: |
