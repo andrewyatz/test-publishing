@@ -36,11 +36,8 @@ jobs:
       - name: Run Refget reference
         run: "refget-compliance report --server https://refget.herokuapp.com/ --no-web --json_path _data/refget-server-perl.json"
 
-#       - name: Run Refget reference
-#         run: |
-#           echo -n '<h1>' > index.html 
-#           date +%s >> index.html
-#           echo '</h1>' >> index.html
+      - name: Run Refget ENA
+        run: "refget-compliance report --server https://www.ebi.ac.uk/ena/cram/ --no-web --json_path _data/ena-server.json"
 
       - name: Commit report
         run: |
@@ -48,7 +45,3 @@ jobs:
           git config --global user.email 'automated@users.noreply.github.com'
           git commit -am "Automated report"
           git push
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
