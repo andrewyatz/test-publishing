@@ -1,0 +1,54 @@
+---
+layout: default
+---
+{% assign meta=site.data.servers[page.server] %}
+{% assign results=site.data[page.server][0] %}
+<a href='{{site.baseurl}}/'>Back to results</a>
+<h2>Test Details</h2>
+<dl>
+  <dt>Server</dt><dd><a href='{{results.server}}'>{{results.server}}</a></dd>
+  <dt>Date run</dt><dd>{{results.date_time}}</dd>
+  <dt>Tests passed</dt><dd>{{results.total_tests_passed}}</dd>
+  <dt>Tests failed</dt><dd>{{results.total_tests_failed}}</dd>
+  <dt>Tests skipped</dt><dd>{{results.total_tests_skipped}}</dd>
+  {% if meta.github %}<dt>GitHub</dt><dd><a href="{{meta.github}}">{{meta.github}}</a></dd>{% endif %}
+</dl>
+
+<h2>Test Results</h2>
+{% for description in site.data.descriptions %}
+  <hr/>
+  <h3 id='{{description[1].id}}'>{{description[1].title}}</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Result</th>
+        <th>Description</th>
+        <th>Response</th>
+      </tr>
+    </thead>
+    <tbody>
+  {% for test in results.test_results %}
+    {% if test.parents contains description[0] %}
+      {% assign lookup=site.data.result[test.result] %}
+      <tr>
+        <td style="width: 10%"><span class='label {{lookup.class}}'>{{lookup.text}}</span></td>
+        <td style="width: 30%">{{test.test_description}}</td>
+        <td style="width: 60%">
+          {{test.text}}
+          {% if test.edge_cases.size > 0 %}
+          <br/>
+          <dl>
+            {% for edge in test.edge_cases %}
+              {% assign edge_case_lookup=site.data.result[edge.result] %}
+              <dt><span class='label {{edge_case_lookup.class}}'>{{edge_case_lookup.text}}</span></dt>
+              <dd>API call: <code>{{edge.api}}</code></dd>
+            {% endfor %}
+          </dl>
+          {% endif %}
+        </td>
+      </tr>
+    {% endif %}
+  {% endfor %}
+    </tbody>
+  </table>
+{% endfor %}
